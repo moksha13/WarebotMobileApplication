@@ -1,131 +1,191 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+// import React, { useState, useEffect } from 'react';
+// import { NavigationContainer } from '@react-navigation/native';
+// import { createStackNavigator } from '@react-navigation/stack';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+// import HomeScreen from './src/screens/HomeScreen';
+// import LiveDataScreen from './src/screens/LiveDataScreen';
+// import ProfileScreen from './src/screens/ProfileScreen';
+// import SignupScreen from './src/screens/SignupScreen';
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+// // Create stack navigators
+// const Stack = createStackNavigator();
+// const LoginStack = createStackNavigator();
+// const HomeStack = createStackNavigator();
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+// // Define Login Flow Stack (for Signup/Login screens)
+// const LoginFlow = () => (
+//   <LoginStack.Navigator screenOptions={{ headerShown: false }}>
+//     <LoginStack.Screen name="SignupScreen" component={SignupScreen} />
+//   </LoginStack.Navigator>
+// );
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+// // Define Home Flow Stack (after user is authenticated)
+// const HomeFlow = () => (
+//   <HomeStack.Navigator screenOptions={{ headerShown: false }}>
+//     <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
+//     <HomeStack.Screen name="LiveDataScreen" component={LiveDataScreen} />
+//     <HomeStack.Screen name="ProfileScreen" component={ProfileScreen} />
+//   </HomeStack.Navigator>
+// );
 
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
+// export default function App() {
+//   const [authKey, setAuthKey] = useState('');
 
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+//   // Check if user is logged in by fetching token from AsyncStorage
+//   const checkLoginStatus = async () => {
+//     try {
+//       const loginToken = await AsyncStorage.getItem('AuthToken');
+//       setAuthKey(loginToken); // Set the auth key if token exists
+//     } catch (error) {
+//       console.error("Error checking login status:", error);
+//     }
+//   };
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+//   useEffect(() => {
+//     checkLoginStatus();
+//   }, []); // Removed dependency on authKey to avoid unnecessary re-triggering
+
+//   console.log(authKey?.length, "ppppppppppppp");
+
+//   return (
+//     <NavigationContainer>
+//       {authKey?.length > 0 ? <HomeFlow /> : <LoginFlow />}
+//       {/* <HomeFlow /> */}
+//     </NavigationContainer>
+//   );
+// }
+import React, { useState,useEffect } from 'react';
+import { View, Text, Button, StatusBar } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import HomeScreen from './src/screens/HomeScreen';
+import LiveDataScreen from './src/screens/LiveDataScreen';
+import ProfileScreen from './src/screens/ProfileScreen';
+import SignupScreen from './src/screens/SignupScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const Stack = createStackNavigator();
+
+export default function App() {
+  const [AuthKey, setAuthKey] = useState('');
+
+  const checkLoginStatus = async () => {
+    try {
+      const loginToken:any = await AsyncStorage.getItem('AuthToken');
+      setAuthKey(loginToken);
+    } catch (error) {
+      console.error("Error checking login status:", error);
+    }
   };
 
-  /*
-   * To keep the template simple and small we're adding padding to prevent view
-   * from rendering under the System UI.
-   * For bigger apps the reccomendation is to use `react-native-safe-area-context`:
-   * https://github.com/AppAndFlow/react-native-safe-area-context
-   *
-   * You can read more about it here:
-   * https://github.com/react-native-community/discussions-and-proposals/discussions/827
-   */
-  const safePadding = '5%';
+  useEffect(()=>{
+    checkLoginStatus()
+  },[AuthKey])
 
+  console.log(AuthKey?.length,"ppppppppppppp")
   return (
-    <View style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        style={backgroundStyle}>
-        <View style={{paddingRight: safePadding}}>
-          <Header/>
-        </View>
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-            paddingHorizontal: safePadding,
-            paddingBottom: safePadding,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName={AuthKey?.length===0||undefined||null?"SignupScreen":"HomeScreen"} screenOptions={{
+        headerShown: false,
+      }}>
+        <Stack.Screen name="SignupScreen" component={SignupScreen} />
+        <Stack.Screen name="HomeScreen" component={HomeScreen} />
+        <Stack.Screen name="LiveDataScreen" component={LiveDataScreen} />
+        <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
 
-export default App;
+// import React, { useState,useEffect } from 'react';
+// import { View, Text, Button, StatusBar } from 'react-native';
+// import { NavigationContainer } from '@react-navigation/native';
+// import { createStackNavigator } from '@react-navigation/stack';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+// import HomeScreen from './src/screens/HomeScreen';
+// import LiveDataScreen from './src/screens/LiveDataScreen';
+// import ProfileScreen from './src/screens/ProfileScreen';
+// import SignupScreen from './src/screens/SignupScreen';
+
+// const Stack = createStackNavigator();
+// const LoginStack = createStackNavigator();
+// const HomeStack = createStackNavigator();
+
+// export default function App() {
+//   const [AuthKey, setAuthKey] = useState('');
+
+//   const LoginStackScreen = () => {
+//     return (
+//       <LoginStack.Navigator
+//         screenOptions={{
+//           animation: "slide_from_right",
+//           headerTitleAlign: "center",
+//           headerBackTitle: "",
+//         }}
+//       >
+//         <LoginStack.Screen
+//           name="SignupScreen"
+//           component={SignupScreen}
+//           options={{ headerShown: false }}
+//         />
+//       </LoginStack.Navigator>
+//     );
+//   };
+
+//   const HomeStackScreen = () => {
+//     return (
+//       <HomeStack.Navigator
+//         screenOptions={{
+//           animation: "slide_from_right",
+//           headerTitleAlign: "center",
+//           headerBackTitle: "",
+//         }}
+//       >
+//         <HomeStack.Screen
+//           name="HomeScreen"
+//           component={HomeScreen}
+//           options={{ headerShown: false }}
+//         />
+//         <HomeStack.Screen
+//           name="LiveDataScreen"
+//           component={LiveDataScreen}
+//           options={{ headerShown: false }}
+//         />
+//         <HomeStack.Screen
+//           name="ProfileScreen"
+//           component={ProfileScreen}
+//           options={{ headerShown: false }}
+//         />
+//       </HomeStack.Navigator>
+//     );
+//   };
+
+//   const checkLoginStatus = async () => {
+//     try {
+//       const loginToken:any = await AsyncStorage.getItem('AuthToken');
+//       setAuthKey(loginToken);
+//     } catch (error) {
+//       console.error("Error checking login status:", error);
+//     }
+//   };
+
+//   useEffect(()=>{
+//     checkLoginStatus()
+//   },[AuthKey])
+
+//   console.log(AuthKey?.length,"ppppppppppppp")
+//   return (
+//     <NavigationContainer>
+//       <Stack.Navigator initialRouteName={AuthKey?.length===0||undefined||null?"Home":"Signup"} screenOptions={{
+//         headerShown: false,
+//       }}>
+//         <Stack.Screen
+//           name={AuthKey?.length===0||undefined||null?"Signup":'Home'}
+//           component={AuthKey?.length>0?HomeStackScreen:LoginStackScreen}
+//           options={{ headerShown: false }}
+//         />
+//       </Stack.Navigator>
+//     </NavigationContainer>
+//   );
+// }
