@@ -15,8 +15,10 @@ import { Dropdown } from "react-native-element-dropdown";
 // import { Ionicons } from "@expo/vector-icons";
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { customScale } from '../utils/CustomScale';
+import { useNavigation } from '@react-navigation/native';
 
-const LiveDataScreen = ({navigation}) => {
+const LiveDataScreen = () => {
+  const navigation = useNavigation();
   // const [warehouse, setWarehouse] = useState(null);
   // const [devices, setDevices] = useState(null);
   // const [inventories, setInventories] = useState(null);
@@ -496,7 +498,7 @@ const LiveDataScreen = ({navigation}) => {
 
           <TouchableOpacity
             style={styles.profileButton}
-            onPress={() => navigation.navigate("ProfileScreen")} // Replace with your profile navigation logic
+            onPress={() => navigation.navigate("HomeStack",{screen:"ProfileScreen"})} // Replace with your profile navigation logic
           >
             <Text style={styles.profileButtonText}>P</Text>
           </TouchableOpacity>
@@ -654,7 +656,7 @@ const LiveDataScreen = ({navigation}) => {
 
           <TouchableOpacity
             style={styles.profileButton}
-            onPress={() => navigation.navigate("ProfileScreen")} // Replace with your profile navigation logic
+            onPress={() => navigation.navigate("HomeStack",{screen:"ProfileScreen"})} // Replace with your profile navigation logic
           >
             <Text style={styles.profileButtonText}>P</Text>
             {/* <Ionicons name="person-outline" size={28} color="#fff" /> */}

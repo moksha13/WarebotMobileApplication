@@ -7,9 +7,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { baseURL } from '../api/apiUrls';
 import HomeScreen from './HomeScreen';
 import { ActivityIndicator } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
-
-export default function SignupScreen({navigation}) {
+export default function SignupScreen() {
+    const navigation = useNavigation(); 
     const [formData, setFormData] = useState({
         name: '',
         password: '',
@@ -91,7 +92,9 @@ export default function SignupScreen({navigation}) {
                 await AsyncStorage.setItem('user_type', data.user_type);
                 await AsyncStorage.setItem('OwnerId', data.user_id);
                 await AsyncStorage.setItem('loginData', JSON.stringify(data));
-                navigation.navigate('HomeScreen'); // Navigate to the home screen after successful login
+                navigation.navigate('HomeStack', {
+                    screen: 'HomeScreen', 
+                  });
             }
         } catch (error) {
             console.error('Error occurred during login request:', error);
@@ -221,7 +224,7 @@ export default function SignupScreen({navigation}) {
                 </TouchableOpacity>
                 <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: customScale(10) }}>
                     <Text style={[styles.checkedText, { color: '#646982' }]}>Do you have an account?</Text>
-                    <TouchableOpacity onPress={() => navigation.navigate('index')}>
+                    <TouchableOpacity onPress={() => console.log("iam clicked")}>
                         <Text style={[styles.forgotText, { marginLeft: 4 }]}>Login</Text>
                     </TouchableOpacity>
                 </View>

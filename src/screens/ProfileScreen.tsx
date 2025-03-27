@@ -11,8 +11,11 @@ import {
 // import LinearGradient from "react-native-linear-gradient";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { customScale } from "../utils/CustomScale";
+import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-const ProfileScreen = ({navigation}) => {
+
+const ProfileScreen = () => {
+  const navigation = useNavigation();
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -42,7 +45,7 @@ const ProfileScreen = ({navigation}) => {
   const handleLogout = async () => {
     try {
       await AsyncStorage.clear(); // Clears all AsyncStorage data
-      navigation.navigate("SignupScreen");
+      navigation.navigate("SignupStack",{screen:"SignupScreen"});
       console.log("User logged out and AsyncStorage cleared");
     } catch (error) {
       console.error("Error clearing AsyncStorage:", error);

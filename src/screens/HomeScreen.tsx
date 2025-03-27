@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { SafeAreaView, View, FlatList, StyleSheet, Text, StatusBar, TouchableOpacity, ActivityIndicator, BackHandler, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SyncDataFunction } from './SyncDataFunction';
 import { customScale } from '../utils/CustomScale';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
-const HomeScreen = ({navigation}) => {
+const HomeScreen = () => {
+  const navigation = useNavigation(); 
   const [wareHouses, setWareHouses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [inventories, setInventories] = useState([]);
@@ -24,8 +26,23 @@ const HomeScreen = ({navigation}) => {
     };
 
     syncAndFetchData();
-    
   }, [])
+
+  useFocusEffect(
+    useCallback(() => {
+      const backAction = () => {
+        Alert.alert('Exit App', 'Are you sure you want to exit?', [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Exit', onPress: () => BackHandler.exitApp() },
+        ]);
+        return true; // Prevent default back action
+      };
+
+      const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+
+      return () => backHandler.remove(); // Remove listener when HomeScreen is unfocused
+    }, [])
+  )
 
 
   const getData = async () => {
@@ -52,7 +69,7 @@ const HomeScreen = ({navigation}) => {
             } else {
               await AsyncStorage.setItem('selectedInventories', JSON.stringify(item));
             }
-            navigation.navigate('LiveDataScreen');
+            navigation.navigate('HomeStack',{screen:'LiveDataScreen'});
           } catch (error) {
             console.error('Error storing selected item:', error);
           }
